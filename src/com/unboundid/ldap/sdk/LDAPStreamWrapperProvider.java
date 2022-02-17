@@ -1,9 +1,9 @@
 /*
- * Copyright 2007-2022 Ping Identity Corporation
+ * Copyright 2009-2022 Ping Identity Corporation
  * All Rights Reserved.
  */
 /*
- * Copyright 2007-2022 Ping Identity Corporation
+ * Copyright 2009-2022 Ping Identity Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 /*
- * Copyright (C) 2007-2022 Ping Identity Corporation
+ * Copyright (C) 2009-2022 Ping Identity Corporation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License (GPLv2 only)
@@ -33,49 +33,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses>.
  */
-package com.unboundid.util;
+package com.unboundid.ldap.sdk;
 
-public class RC4 {
+import java.io.InputStream;
+import java.io.OutputStream;
 
-    byte[] s;
-    int i, j;
+public interface LDAPStreamWrapperProvider {
 
-    public RC4()
-    {
-    }
-    public RC4(byte[] key)
-    {
-        init(key, 0, key.length);
-    }
+    public InputStream createInputStream(InputStream inputStream);
 
-    public void init(byte[] key, int ki, int klen)
-    {
-        s = new byte[256];
+    public OutputStream createOutputStream(OutputStream outputStream);
 
-        for (i = 0; i < 256; i++)
-            s[i] = (byte)i;
-
-        for (i = j = 0; i < 256; i++) {
-            j = (j + key[ki + i % klen] + s[i]) & 0xff;
-            byte t = s[i];
-            s[i] = s[j];
-            s[j] = t;
-        }
-
-        i = j = 0;
-    }
-    public void update(byte[] src, int soff, int slen, byte[] dst, int doff)
-    {
-        int slim;
-
-        slim = soff + slen;
-        while (soff < slim) {
-            i = (i + 1) & 0xff;
-            j = (j + s[i]) & 0xff;
-            byte t = s[i];
-            s[i] = s[j];
-            s[j] = t;
-            dst[doff++] = (byte)(src[soff++] ^ s[(s[i] + s[j]) & 0xff]);
-        }
-    }
 }

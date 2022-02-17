@@ -64,8 +64,6 @@ import com.unboundid.util.NotNull;
 import com.unboundid.util.Nullable;
 import com.unboundid.util.StaticUtils;
 import com.unboundid.util.WakeableSleeper;
-import com.unboundid.util.NTLMInputStream;
-import com.unboundid.util.NTLMOutputStream;
 
 import static com.unboundid.ldap.sdk.LDAPMessages.*;
 
@@ -1014,14 +1012,14 @@ final class LDAPConnectionReader
     }
   }
 
-  public OutputStream startNTLMSealing(byte[] ntlmKey) throws IOException {
+  public OutputStream startWrappingStreams(LDAPStreamWrapperProvider provider) throws IOException {
 
-    inputStream = new NTLMInputStream(ntlmKey, inputStream);
+    inputStream = provider.createInputStream(inputStream);
 
     asn1StreamReader = new ASN1StreamReader(inputStream,
           connection.getConnectionOptions().getMaxMessageSize());
 
-    return new NTLMOutputStream(ntlmKey, socket.getOutputStream());
+    return provider.createOutputStream(socket.getOutputStream());
   }
 
   /**

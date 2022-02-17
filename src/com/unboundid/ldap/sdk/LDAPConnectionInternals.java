@@ -431,12 +431,17 @@ final class LDAPConnectionInternals
     outputStream = connectionReader.doStartTLS(sslSocketFactory);
   }
 
-
-  void startNTLMSealing(byte[] ntlmKey) throws IOException
-  {
-      outputStream = connectionReader.startNTLMSealing(ntlmKey);
+  /**
+   * Converts this clear-text connection to one that encrypts all communication
+   * using a wrapped Input and Output stream
+   *
+   * @param  provider  The provider which creates the streams
+   *
+   * @throws  IOException  If a problem occurs while converting this stream
+   */
+  void startWrappingStreams(LDAPStreamWrapperProvider provider) throws IOException {
+      outputStream = connectionReader.startWrappingStreams(provider);
   }
-
 
   /**
    * Converts this clear-text connection to one that uses SASL integrity and/or
